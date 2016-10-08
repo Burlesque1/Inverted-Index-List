@@ -14,4 +14,6 @@ while num < 4:
 	num += 1
 
 for index, file in file_index.items():
-	print(f.readline())
+	line = file.readline()
+	print(index, line)
+	heap.put((line,index))

@@ -38,7 +38,7 @@ def create_docID_table(url, docID):
 	
 def handle_index_file(file_name, docID, data_f):
 	pos_accum = 0
-	
+	count = docID
 	posting = "posting_" + file_name[-7]
 	# generate intermediate posting
 	w_file = open(posting, 'a')				# remember to set as binary/ascii
@@ -51,7 +51,7 @@ def handle_index_file(file_name, docID, data_f):
 			
 			# create page (or docID-to-URL) table.
 			create_docID_table(url, docID)
-			
+			print(line)
 			print(line[3], pos_accum)
 			# uncompressing gzip file
 			decomp_data = handle_data_file(pos_accum, size, data_f)		
@@ -62,7 +62,7 @@ def handle_index_file(file_name, docID, data_f):
 			pos_accum += size
 			print('\n\n\n\n')
 			docID += 1
-			if  docID > 5:
+			if  docID - count > 5:
 				break
 	w_file.close()
 	return docID
