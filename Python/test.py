@@ -26,6 +26,8 @@ while a<5:
 	a+=1
 	
 d=open('df.txt','wb')
-# d.write(1)
-fd='dfa'
-print(type(fd.format('b')))
+d=bin(200)
+d.write(d)
+# print(bin(200))
+# fd='dfa'
+# print(type(fd.format('b')))

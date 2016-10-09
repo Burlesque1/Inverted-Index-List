@@ -5,7 +5,7 @@ import re
 	
 def word_parsing_tool(decomp_data, w_file, docID):
 	# patternTag = "<(!|/)?(.|\n)*?>"
-	patternTag = "</?[a-zA-Z]+[^><]*>"
+	patternTag = "</?[a-zA-Z0-9]+[^><]*>"
 	patternBlank = "(^\\s*)|(\\s*$)";
 	
 	decomp_data_no_tag = re.sub(patternTag,'',str(decomp_data))
@@ -72,8 +72,8 @@ num = 0
 docID = 0
 binary_flag = False # True for ascii 
 while num < 4:
-	data_f = "D:\\nz2_merged\\" + str(num) + "_data"
-	index_f = "D:\\nz2_merged\\" + str(num) + "_index"
+	data_f = "H:\\nz2_merged\\" + str(num) + "_data"
+	index_f = "H:\\nz2_merged\\" + str(num) + "_index"
 	docID = handle_index_file(index_f, docID, data_f)
 	num += 1 
 
