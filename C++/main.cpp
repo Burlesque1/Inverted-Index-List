@@ -4,11 +4,20 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "method.hpp"
+
+
 using namespace std;
 
+#ifndef TEST
+#define TEST 1
+
+
+#if TEST!=0
 int main () {
-  
-  map<string, int> lexicon;  
+  map<string, int> lexicon_m;
+  vector<string> termID(500, "2");  
+  vector<int> lexicon(termID.size(), 1);
   int i=0;
   string line, word="";
   int pos=0;
@@ -23,28 +32,26 @@ int main () {
       	string item;
      	while (getline(ss, item, '\ ')) 
 		{
-//			cout<<" > "<<item<<" ";
 			temp.push_back(item);
     	}
     	if(temp[0]!=word)
     	{	
 			word=temp[0];
 			// add into lexicon
-			lexicon[word]=pos;    	
+			lexicon_m[word]=pos;
+			lexicon[termID[word]]=pos;    	
 		}
 	
 		for(int i=1;i<temp.size();i++)
 		{
 			int tmp = stoi(temp[i]);
-//			 write into file
+			// write into file
 			writefile.seekp(0, ios::end);
 			writefile.write((char*)(&tmp), sizeof(tmp));
-//			 accumulate pos
-			pos=writefile.tellp(); // how many bytes each? each int 4 bytes			
-//			cout<<writefile.tellp()<<" "<<pos<<endl;
+			// accumulate pos
+			pos=writefile.tellp(); // how many bytes each? each int 4 bytes	
 		}		
-      	if(i++>2)
-      		break;
+		i++;
     }
 ////	-------------------------------------------test------------------------------------------	
 //    	int a[10] = { 0 };
@@ -53,32 +60,31 @@ int main () {
 //		for (int i = 0; i<9; i++)
 //			writefile.write((char*)(&a[i]), sizeof(a[i]));
 ////	------------------------------------------------------------------------------------------
-    readfile.close();
     writefile.close();
+    readfile.close();
   }
   else 
   		cout << "Unable to open file"; 
   	
-	
-  streampos size;
-  int * memblock;
-
-  ifstream file ("inverted-index.bin", ios::in|ios::binary|ios::ate);
-//  ifstream file ("ok2002com.bin", ios::in|ios::binary|ios::ate);
-  if (file.is_open())
-  {
-    size = file.tellg();
-    memblock = new int [size];
-    file.seekg (0, ios::beg);
-    file.read ((char*)memblock, size);
-    file.close();
-
-    cout << "the entire file content is in memory\n";
-	for(int i=0;i*4<size;i++)
-		cout << memblock[i] << " "<<i<<endl;
-    delete[] memblock;
-  }
-  else 
-  	cout << "Unable to open file";
+  for(auto l:lexicon_m)
+  	cout<<l.first<<" "<<l.second<<endl;
+ 
+ 	cout<<i<<endl;
+//  read_b_file("");
+  	setup_lexicon(lexicon, termID);
   return 0;
 }
+
+#else
+int main()
+{
+	cout<<"this is test mode!"<<endl;
+	int a=0;
+	cout<<to_string(a);
+	return 0;
+}
+
+#endif
+#endif
+
+
