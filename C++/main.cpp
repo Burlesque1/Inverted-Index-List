@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <map> 
+#include <unordered_map> 
 #include <string>
 #include <sstream>
 #include <vector>
@@ -15,10 +15,10 @@ using namespace std;
 
 #if TEST!=0
 int main () {
-  map<string, int> lexicon_m;
+  unordered_map<string, int> termID_m;
   vector<string> termID(500, "2");  
   vector<int> lexicon(termID.size(), 1);
-  int i=0;
+  int i=0, ID=0;
   string line, word="";
   int pos=0;
   ifstream readfile ("merged-file");
@@ -38,8 +38,9 @@ int main () {
     	{	
 			word=temp[0];
 			// add into lexicon
-			lexicon_m[word]=pos;
-			lexicon[termID[word]]=pos;    	
+			termID_m[word]=ID++;
+			termID.push_back(word);
+			lexicon.push_back(pos);    	
 		}
 	
 		for(int i=1;i<temp.size();i++)
@@ -66,7 +67,7 @@ int main () {
   else 
   		cout << "Unable to open file"; 
   	
-  for(auto l:lexicon_m)
+  for(auto l:termID_m)
   	cout<<l.first<<" "<<l.second<<endl;
  
  	cout<<i<<endl;
