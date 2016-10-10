@@ -1,6 +1,9 @@
+import tarfile
 import gzip
+import zlib
 import re
 import os
+
 
 
 def word_parsing_tool(decomp_data, w_file, docID):
@@ -35,8 +38,8 @@ def create_docID_table(url, docID, page_table):
 	pass
 
 	
-	
-def handle_index_file(file_name, docID, data_f, dir_tag):
+	# for nz2
+def handle_index_file2(file_name, docID, data_f, dir_tag):
 	pos_accum = 0
 	count = docID
 	
@@ -56,16 +59,16 @@ def handle_index_file(file_name, docID, data_f, dir_tag):
 			url = line[0]
 			size = int(line[3])
 			
-			# create page (or docID-to-URL) table.
-			create_docID_table(url, docID, page_table)
+			# # create page (or docID-to-URL) table.
+			# create_docID_table(url, docID, page_table)
 			
 			print(line)
 			print(line[3], pos_accum)
-			# uncompressing gzip file
-			decomp_data = handle_data_file(pos_accum, size, data_f)		
+			# # uncompressing gzip file
+			# decomp_data = handle_data_file(pos_accum, size, data_f)		
 				
-			# call parser to parse decomp_data and generate initial posting
-			word_parsing_tool(decomp_data, w_file, docID)
+			# # call parser to parse decomp_data and generate initial posting
+			# word_parsing_tool(decomp_data, w_file, docID)
 			
 			pos_accum += size
 			print('\n\n\n\n')
@@ -74,4 +77,53 @@ def handle_index_file(file_name, docID, data_f, dir_tag):
 				break
 	w_file.close()
 	page_table.close()
+	return docID
+	
+	# for nz
+def handle_index_file(tar_f, docID, data_f, dir_tag):
+	count = docID	
+	# directory = str(int(docID/500))
+	# posting = "/posting_" + file_name[-7]
+	# if dir_tag == True:
+		# if not os.path.exists(directory):
+			# print('Creating directory ' + directory)
+			# os.makedirs(directory)
+		
+	# # generate intermediate posting
+	# w_file = open(directory + posting, 'a')				# remember to set as binary/ascii
+	# page_table = open('page_table','a')		# add exception
+	with  tarfile.open(tar_f, "r") as tar:
+		print(len(tar.getmembers()))
+		index_f=0
+		for member in tar.getmembers():	# [200 files + 1 folder]
+			if member.isreg()and member.name.find("index")!= -1:
+				pos_accum = 0
+				detar_content = tar.extractfile(member).read()
+				degz_content= zlib.decompress(detar_content, zlib.MAX_WBITS|32)
+				# print(type(degz_content), len(degz_content),degz_content[0:10])
+				
+				for line in str(degz_content).split('\\n')[0:2]: # 10 records
+					line = line.split(' ')
+					url = line[0]
+					size = int(line[3])
+					print(line, url, size)
+			
+					# # create page (or docID-to-URL) table.
+					# create_docID_table(url, docID, page_table)
+					
+					# # uncompressing gzip file
+					# decomp_data = handle_data_file(pos_accum, size, data_f)		
+						
+					# # call parser to parse decomp_data and generate initial posting
+					# word_parsing_tool(decomp_data, w_file, docID)
+					
+					pos_accum += size
+					print('\n\n\n\n')
+					docID += 1
+				index_f += 1
+				print("index", index_f)
+				if index_f > 1:
+					break
+	# w_file.close()
+	# page_table.close()
 	return docID

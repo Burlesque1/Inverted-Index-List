@@ -13,11 +13,11 @@ using namespace std;
 #define TEST 1
 
 
-#if TEST!=0
+#if TEST!=1
 int main () {
   unordered_map<string, int> termID_m;
-  vector<string> termID(500, "2");  
-  vector<int> lexicon(termID.size(), 1);
+  vector<string> termID;  
+  vector<int> lexicon;
   int i=0, ID=0;
   string line, word="";
   int pos=0;
@@ -80,8 +80,8 @@ int main () {
 int main()
 {
 	cout<<"this is test mode!"<<endl;
-	int a=0;
-	cout<<to_string(a);
+	int a[2]={0,1}, d=0;
+	cout<<sizeof(a)<<" "<<sizeof(d);
 	return 0;
 }
 

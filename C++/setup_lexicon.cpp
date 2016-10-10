@@ -1,13 +1,12 @@
 #include <iostream>
 #include <fstream>
-#include <map>
 #include <vector> 
 #include <string>
 #include "method.hpp"
 
 
 #ifndef BINARYMODE
-#define BINARYMODE 0
+#define BINARYMODE 1
 
 
 int setup_lexicon(vector<int> &lexicon, vector<string> &termID){
@@ -32,8 +31,6 @@ int setup_lexicon(vector<int> &lexicon, vector<string> &termID){
 	for(int i=0;i<lexicon.size();i++)
 	{
 //		itoa(l.second, buffer, 10);string s(buffer);
-		
-		
 	    lf << termID[i] +' '+ to_string(lexicon[i]) +'\n';	
 	}
 	lf.close();
