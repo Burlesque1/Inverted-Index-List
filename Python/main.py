@@ -1,4 +1,5 @@
 from method import *
+from datetime import datetime
 
 
 num = 0
@@ -6,28 +7,45 @@ docID = 0
 count = 0
 binary_flag = False # True for ascii 
 dir_tag = False
-
-for root, dirs, files in os.walk('G:\\NYU\\CS 6913\\Assignment2\\NZ'):
+start_time = datetime.now()
+print(str(start_time))
+	# for NZ
+for root, dirs, files in os.walk('G:\\NZ'):
+# for root, dirs, files in os.walk('H:\\NYU\\CS 6913\\Assignment2\\NZ'):
 	for fname in files:
 		if '.tar' in fname:
+			print(fname)
 			tar_f = os.path.join(root,fname)
 			# print(tar_f)
-			docID , count= handle_tar_file(tar_f, docID, dir_tag, count)
+			docID , count= handle_tar_file(tar_f, docID, count)
 			num += 1
-			if num >= 2:
+			print('\n' + fname + ' complete\n')
+			# input('aa')	
+			if num >= 1:
 				break
-# while num < 1:
+	
+	# # for NZ2!
+# data_f = "G:\\nz2_merged\\" + str(num) + "_data"
+# index_f = "G:\\nz2_merged\\" + str(num) + "_index"	
+# while num < 83:
 	# if num%500 == 0:
 		# dir_tag = True # every 500 pages within a folder
 	# else:
-		# dir_tag = False
-	# data_f = "H:\nz2_merged\\" + str(num) + "_data"
-	# index_f = "H:\\nz2_merged\\" + str(num) + "_index"	
-	# # docID = handle_index_file2(index_f, docID, data_f, dir_tag)
+		# dir_tag = False	
+		# num += 1
+	# print(data_f + ' complete\n', docID, ' docID')
 	
-	# tar_f = "H:\\NYU\\CS 6913\\Assignment2\\NZ\\vol_0_99.tar"
-	# docID = handle_index_file(tar_f, docID, data_f, dir_tag)
-	# num += 1
 
-
-
+# for root, dirs, files in os.walk('G:\\nz2_merged'):
+	# for name in files:
+		# input('d')
+		# if '_data' in name:
+			# data_f = os.path.join(root,name)
+		# if  '_index' in name:
+			# index_f = os.path.join(root,name)
+			# docID = handle_index_file(index_f, docID, data_f, dir_tag)
+			# print(name, docID, int((datetime.now()-start_time).seconds))
+finish_time = datetime.now()
+print('The running time is ', str((finish_time-start_time).seconds), 's')
+print('Total page amount is ', docID)
+print('Speed is ',docID/int((finish_time-start_time).seconds), '/s')
