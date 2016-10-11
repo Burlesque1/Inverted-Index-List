@@ -23,6 +23,7 @@ def word_parsing_tool(data_block, w_file, docID):
 	# for m in re.finditer(r"[A-Za-z]+", text_new):
 	for m in re.finditer(r"[A-Za-z]+", content3):
 		term, pos = m.group(0), (m.start(), m.end())
+		w_file.write(term + ' ' + str(docID)  + '\n')
 		# print(term + ' ' + str(docID) + ' ' + str(m.start()) + '\n')
 		# print('%s: %02d-%02d' % (m.group(0), m.start(), m.end()))			
 	
@@ -52,6 +53,7 @@ def handle_data(docID, degz_index, degz_data, page_table, w_file):
 		size = int(line[3])
 				
 		# create page (or docID-to-URL) table.
+		page_table.write(str(url)+ " " + str(docID) + "\n")	# create_docID_table(url, docID, page_table)
 				
 		
 		# read block from degz_data
@@ -71,6 +73,7 @@ def handle_data(docID, degz_index, degz_data, page_table, w_file):
 				# print(data_block[9:13], "error page")
 				continue
 			# call parser to parse decomp_data and generate initial posting
+			word_parsing_tool(data_block[sp:], w_file, docID)
 			
 			pos_accum += size
 			docID += 1
@@ -101,6 +104,7 @@ def handle_tar_file(tar_f, docID, file_num=0):
 				degz_data = decompress(tar, data_mname)
 				
 				# parse url and generate url-table, intermediate postings
+				docID = handle_data(docID, degz_index, degz_data, page_table, w_file)
 				count += 1	  # usually 100/tarfile
 				print('\n' + data_mname + ' complete\n')
 				print(docID, 'docID')
@@ -113,11 +117,11 @@ def handle_tar_file(tar_f, docID, file_num=0):
 	
 	
 	# for nz2	
-def handle_data_file(pos, page_size, file_name):
-	with gzip.open(file_name, 'rb') as f:
-		f.seek(pos)
-		decomp_data= f.read(page_size)
-	return decomp_data[0:100]
+	# for nz2	
+def handle_data_file(pos, page_size, ff):
+	decomp_data= ff.read(page_size)
+	# print(decomp_data[0:100])
+	return decomp_data
 	# gf = gzip.GzipFile(file_name)
 	# print(gf.peek(page_size))
 	
@@ -138,26 +142,25 @@ def handle_index_file(file_name, docID, data_f, dir_tag):
 	w_file = open(directory + posting, 'a')				# remember to set as binary/ascii
 	page_table = open('page_table_nz2','a')		# add exception
 	with gzip.open(file_name) as f:			# reduce open/close num
-		for line in f:
-			line = str(line).split(' ')
-			url = line[0]
-			size = int(line[3])
-			
-			# # create page (or docID-to-URL) table.
-			create_docID_table(url, docID, page_table)
-			
-			# print(line)
-			# print(line[3], pos_accum)
-			# uncompressing gzip file
-			decomp_data = handle_data_file(pos_accum, size, data_f).decode(encoding='iso-8859-1')		
+		with gzip.open(data_f, 'rb') as ff:		# reduce time complexity
+			for line in f:
+				line = str(line).split(' ')
+				url = line[0]
+				size = int(line[3])
 				
-			# call parser to parse decomp_data and generate initial posting
-			# word_parsing_tool(decomp_data, w_file, docID)
-			
-			pos_accum += size
-			docID += 1
-			# if  docID - count > 5:
-				# break
+				# # create page (or docID-to-URL) table.
+				create_docID_table(url, docID, page_table)
+				
+				# uncompressing gzip file	
+				decomp_data = handle_data_file(pos_accum, size, ff).decode(encoding='iso-8859-1')		
+					
+				# call parser to parse decomp_data and generate initial posting
+				word_parsing_tool(decomp_data, w_file, docID)
+				
+				pos_accum += size
+				docID += 1
+				# if  docID - count > 5:
+					# break
 	w_file.close()
 	page_table.close()
 	return docID
