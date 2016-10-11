@@ -17,12 +17,13 @@ for root, dirs, files in os.walk('G:\\NZ'):
 			print(fname)
 			tar_f = os.path.join(root,fname)
 			# print(tar_f)
-			docID , count= handle_tar_file(tar_f, docID, count)
-			num += 1
-			print('\n' + fname + ' complete\n')
-			# input('aa')	
-			if num >= 1:
-				break
+			docID = handle_tar_file(tar_f, docID)
+			print('\n' + fname + ' complete\n')			
+			print(int((datetime.now()-start_time).seconds), 's' , docID)
+			# input('aa')
+			# num += 1	
+			# if num >= 1:
+				# break
 	
 	# # for NZ2!
 # data_f = "G:\\nz2_merged\\" + str(num) + "_data"
