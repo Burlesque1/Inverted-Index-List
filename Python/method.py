@@ -78,52 +78,62 @@ def handle_index_file2(file_name, docID, data_f, dir_tag):
 	w_file.close()
 	page_table.close()
 	return docID
+
 	
-	# for nz
-def handle_index_file(tar_f, docID, data_f, dir_tag):
-	count = docID	
-	# directory = str(int(docID/500))
-	# posting = "/posting_" + file_name[-7]
-	# if dir_tag == True:
-		# if not os.path.exists(directory):
-			# print('Creating directory ' + directory)
-			# os.makedirs(directory)
-		
-	# # generate intermediate posting
-	# w_file = open(directory + posting, 'a')				# remember to set as binary/ascii
-	# page_table = open('page_table','a')		# add exception
+
+def handle_tar_file(tar_f, docID, dir_tag, file_num=0):
+	directory  = "posting/" 
+	if not os.path.exists(directory):
+		print('Creating directory ' + directory)
+		os.makedirs(directory)
+	w_file = open(directory + str(file_num), 'a')				# remember to set as binary/ascii
+	page_table = open('page_table','a')		# add exception
 	with  tarfile.open(tar_f, "r") as tar:
-		print(len(tar.getmembers()))
-		index_f=0
-		for member in tar.getmembers():	# [200 files + 1 folder]
-			if member.isreg()and member.name.find("index")!= -1:
-				pos_accum = 0
-				detar_content = tar.extractfile(member).read()
-				degz_content= zlib.decompress(detar_content, zlib.MAX_WBITS|32)
-				# print(type(degz_content), len(degz_content),degz_content[0:10])
+		count = 0	# count # of files in current tar
+		# total_member = len(tar.getmembers())
+		for data_mname in tar.getnames():
+			if '_data' in data_mname:
+				pos = data_mname.find('_data')
+				index_mname = data_mname[0:pos] + '_index'
+				# data_mname = 
+				print(data_mname)
+				print(index_mname)
 				
-				for line in str(degz_content).split('\\n')[0:2]: # 10 records
+				# decomp index
+				index_member = tar.getmember(index_mname)
+				detar_index = tar.extractfile(index_member).read()
+				degz_index= zlib.decompress(detar_index, zlib.MAX_WBITS|32)
+				
+				# decomp data
+				data_member = tar.getmember(data_mname)
+				detar_data= tar.extractfile(index_member).read()
+				degz_data= zlib.decompress(detar_index, zlib.MAX_WBITS|32)
+				
+				pos_accum = 0
+				for line in str(degz_index).split('\\n')[0:2]:	 # 2 records
 					line = line.split(' ')
 					url = line[0]
 					size = int(line[3])
-					print(line, url, size)
-			
-					# # create page (or docID-to-URL) table.
-					# create_docID_table(url, docID, page_table)
-					
-					# # uncompressing gzip file
-					# decomp_data = handle_data_file(pos_accum, size, data_f)		
+					# print(line, url, size)
 						
-					# # call parser to parse decomp_data and generate initial posting
-					# word_parsing_tool(decomp_data, w_file, docID)
+					# create page (or docID-to-URL) table.
+					create_docID_table(url, docID, page_table)
 					
+					
+					# read block from degz_dara
+					data_block = str(degz_data[pos_accum:(pos_accum + size)])
+					
+					
+					# call parser to parse decomp_data and generate initial posting
+					word_parsing_tool(data_block, w_file, docID)
+						
+						
 					pos_accum += size
-					print('\n\n\n\n')
+					# print('\n\n\n\n')
 					docID += 1
-				index_f += 1
-				print("index", index_f)
-				if index_f > 1:
-					break
-	# w_file.close()
-	# page_table.close()
-	return docID
+				count += 1	  # index_f is usually from 100/tarfile
+			# if count > 1:
+				# break
+	w_file.close()
+	page_table.close()
+	return docID, count
