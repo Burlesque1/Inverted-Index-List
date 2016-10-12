@@ -58,11 +58,10 @@ def handle_data(docID, degz_index, degz_data, page_table, w_file):
 		sp = data_block.find('<')
 		
 		# Skip error pages
-		if int(data_block[9:13])>=400: #if data_block[0:15].find(str(404))!=-1:
+		if int(data_block[9:13])>=400: 
 			continue
 			
 		# create page (or docID-to-URL) table.
-		# print(url)
 		try:
 			s_line = url + " " + str(docID) + "\n"
 			page_table.write(s_line.encode())	# create_docID_table(url, docID, page_table)		
