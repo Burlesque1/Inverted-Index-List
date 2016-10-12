@@ -10,7 +10,7 @@ dir_tag = False
 start_time = datetime.now()
 print(str(start_time))
 	# for NZ
-for root, dirs, files in os.walk('C:\\Users\\Student\\Desktop\\n'):
+for root, dirs, files in os.walk('G:\\NZ'):
 # for root, dirs, files in os.walk('H:\\NYU\\CS 6913\\Assignment2\\NZ'):
 	for fname in files:
 		if '.tar' in fname:
