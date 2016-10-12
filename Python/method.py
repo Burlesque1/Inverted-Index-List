@@ -15,9 +15,9 @@ def word_parsing_tool(data_block, w_file, docID):
 	reg1 = re.compile(patternTag)
 	reg2 = re.compile(patternBlank)
 	reg3 = re.compile(r'&nbsp;')
-	content1 = reg1.sub('', data_block)
-	content2 = reg2.sub('', content1)
-	content3 = reg3.sub('', content2)
+	content1 = reg1.sub(' ', data_block)
+	content2 = reg2.sub(' ', content1)
+	content3 = reg3.sub(' ', content2)
 	
 	
 	# for m in re.finditer(r"[A-Za-z]+", text_new):
@@ -88,6 +88,9 @@ def handle_tar_file(tar_f, docID):
 		w_file = open(directory + tar.getnames()[0][40:], 'a')				# remember to set as binary/ascii
 		page_table = open('page_table','ab')		# add exception
 		for data_mname in tar.getnames():		# 100 files
+			if '2406' in data_mname:
+				print('skip')
+				continue
 			if '_data' in data_mname:
 				pos = data_mname.find('_data')
 				index_mname = data_mname[0:pos] + '_index'
@@ -100,7 +103,7 @@ def handle_tar_file(tar_f, docID):
 				
 				# parse url and generate url-table, intermediate postings
 				docID = handle_data(docID, degz_index, degz_data, page_table, w_file)
-				# print('\n' + data_mname + ' complete\n', docID, ' docID')
+				print('\n' + data_mname + ' complete\n', docID, ' docID')
 		w_file.close()
 		page_table.close()
 	return docID

@@ -3,14 +3,14 @@ from datetime import datetime
 
 
 num = 0
-docID = 0
+docID = 1149043
 count = 0
 binary_flag = False # True for ascii 
 dir_tag = False
 start_time = datetime.now()
 print(str(start_time))
 	# for NZ
-for root, dirs, files in os.walk('C:\\Users\\Student\\Desktop\\n'):
+for root, dirs, files in os.walk('C:\\Users\\Student\\Desktop\\New folder\\2400_2499'):
 # for root, dirs, files in os.walk('H:\\NYU\\CS 6913\\Assignment2\\NZ'):
 	for fname in files:
 		if '.tar' in fname:
