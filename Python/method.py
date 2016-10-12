@@ -52,7 +52,15 @@ def handle_data(docID, degz_index, degz_data, page_table, w_file):
 		line = line.split(' ')
 		url = line[0]
 		size = int(line[3])
-
+		
+		# read block from degz_data
+		data_block = degz_data[pos_accum:(pos_accum + size)].decode(encoding='iso-8859-1')	
+		sp = data_block.find('<')
+		
+		# Skip error pages
+		if int(data_block[9:13])>=400: #if data_block[0:15].find(str(404))!=-1:
+			continue
+			
 		# create page (or docID-to-URL) table.
 		# print(url)
 		try:
@@ -61,30 +69,11 @@ def handle_data(docID, degz_index, degz_data, page_table, w_file):
 		except Exception as e:
 			print(e)
 			print(url.encode())
-			input('d')
-			
-		
-		# read block from degz_data
-		try:
-			data_block = degz_data[pos_accum:(pos_accum + size)].decode(encoding='iso-8859-1')	
-		except Exception as e:
-			print(e,'iso-8859-1 not work')
-			data_block = degz_data[pos_accum:(pos_accum + size)].decode(encoding='windows-1252')
-			input('e')
-		except Exception as e:
-			print(str(e),'windows-1252 not work')
-			input('e')
-		else:
-			sp = data_block.find('<')
-			# print(data_block[9:13], "error page")
-			
-			# Skip error pages
-			if int(data_block[9:13])>=400: #if data_block[0:15].find(str(404))!=-1:
-				continue
-			# call parser to parse decomp_data and generate initial posting
-			# word_parsing_tool(data_block[sp:], w_file, docID)
-			pos_accum += size
-			docID += 1
+	
+		# call parser to parse decomp_data and generate initial posting
+		word_parsing_tool(data_block[sp:], w_file, docID)
+		pos_accum += size
+		docID += 1
 	return docID	
 	# end of a n_index file
 	
