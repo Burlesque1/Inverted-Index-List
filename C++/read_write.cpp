@@ -6,7 +6,7 @@
 #include <vector>
 using namespace std;
 
-int read_b_file(string file_name)
+int read_b_file(string file_name)	// used for checking final answer
 {
   streampos size;
   int * memblock;

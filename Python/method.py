@@ -21,7 +21,7 @@ def word_parsing_tool(data_block, w_file, docID):
 	
 	
 	# for m in re.finditer(r"[A-Za-z]+", text_new):
-	for m in re.finditer(r"[A-Za-z]+", content3):
+	for m in re.finditer(r"[A-Za-z0-9]+", content3):
 		term, pos = m.group(0), (m.start(), m.end())
 		w_file.write(term + ' ' + str(docID)  + '\n')
 		# print(term + ' ' + str(docID) + ' ' + str(m.start()) + '\n')
