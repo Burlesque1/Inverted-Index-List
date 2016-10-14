@@ -8,24 +8,17 @@ import os
 
 def word_parsing_tool(data_block, w_file, docID):
 	patternTag = "<[^>]*>"
-	# patternTag = "</?[a-zA-Z0-9]+[^><]*>"
-	# patternBlank = "(^\\s*)|(\\s*$)";
 	patternBlank = r"[\t\r\n\f\v]";
-	# print(type(data_block))
 	reg1 = re.compile(patternTag)
 	reg2 = re.compile(patternBlank)
 	reg3 = re.compile(r'&nbsp;')
-	content1 = reg1.sub(' ', data_block)
-	content2 = reg2.sub(' ', content1)
+	content1 = reg1.sub(' ', data_block)	# remove html tags and some irrelevant chars
+	content2 = reg2.sub(' ', content1)		
 	content3 = reg3.sub(' ', content2)
-	
-	
-	# for m in re.finditer(r"[A-Za-z]+", text_new):
+		
 	for m in re.finditer(r"[A-Za-z0-9]+", content3):
 		term, pos = m.group(0), (m.start(), m.end())
-		w_file.write(term + ' ' + str(docID)  + '\n')
-		# print(term + ' ' + str(docID) + ' ' + str(m.start()) + '\n')
-		# print('%s: %02d-%02d' % (m.group(0), m.start(), m.end()))			
+		w_file.write(term + ' ' + str(docID)  + '\n')		
 	
 
 	 
@@ -44,7 +37,7 @@ def decompress(tar, target):
 	return de_gz
 	
 	
-
+# find corresponding data in _data file and pass it to word parser
 def handle_data(docID, degz_index, degz_data, page_table, w_file):
 	pos_accum = 0
 	for line in degz_index.decode(encoding='iso-8859-1').replace('b\'', '').split('\n')[0:-1]:	
@@ -57,8 +50,8 @@ def handle_data(docID, degz_index, degz_data, page_table, w_file):
 		data_block = degz_data[pos_accum:(pos_accum + size)].decode(encoding='iso-8859-1')	
 		sp = data_block.find('<')
 		
-		# Skip error pages
-		if int(data_block[9:13])>=400: 
+		# Skip error pages and truncated pages
+		if int(data_block[9:13])>=400 or ('</html>' not in data_block[-20:]): 
 			continue
 			
 		# create page (or docID-to-URL) table.
@@ -78,7 +71,7 @@ def handle_data(docID, degz_index, degz_data, page_table, w_file):
 	
 	
 	
-	# for NZ
+# decompress tar file and pass gz file to next method
 def handle_tar_file(tar_f, docID):
 	directory  = "posting/" 
 	if not os.path.exists(directory):

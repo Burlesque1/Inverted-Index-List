@@ -3,15 +3,14 @@ from datetime import datetime
 
 
 num = 0
-docID = 1149043
+docID = 0
 count = 0
 binary_flag = False # True for ascii 
 dir_tag = False
 start_time = datetime.now()
 print(str(start_time))
-	# for NZ
-for root, dirs, files in os.walk('C:\\Users\\Student\\Desktop\\New folder\\2400_2499'):
-# for root, dirs, files in os.walk('H:\\NYU\\CS 6913\\Assignment2\\NZ'):
+	
+for root, dirs, files in os.walk('H:\\NYU\\CS 6913\\Assignment2\\NZ'):
 	for fname in files:
 		if '.tar' in fname:
 			print(fname)
@@ -20,10 +19,12 @@ for root, dirs, files in os.walk('C:\\Users\\Student\\Desktop\\New folder\\2400_
 			docID = handle_tar_file(tar_f, docID)
 			print('\n' + fname + ' complete\n')			
 			print(int((datetime.now()-start_time).seconds), 's' , docID)
-			# input('aa')
-			# num += 1	
-			# if num >= 1:
-				# break
+			
+
+finish_time = datetime.now()
+print('The running time is ', str((finish_time-start_time).seconds), 's')
+print('Total page amount is ', docID)
+print('Speed is ',docID/int((finish_time-start_time).seconds), '/s')
 	
 	# # for NZ2!
 # data_f = "G:\\nz2_merged\\" + str(num) + "_data"
@@ -46,7 +47,3 @@ for root, dirs, files in os.walk('C:\\Users\\Student\\Desktop\\New folder\\2400_
 			# index_f = os.path.join(root,name)
 			# docID = handle_index_file(index_f, docID, data_f, dir_tag)
 			# print(name, docID, int((datetime.now()-start_time).seconds))
-finish_time = datetime.now()
-print('The running time is ', str((finish_time-start_time).seconds), 's')
-print('Total page amount is ', docID)
-print('Speed is ',docID/int((finish_time-start_time).seconds), '/s')
